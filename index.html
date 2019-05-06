@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Gellery</title>
+    <link rel="stylesheet" type="text/css" href="./style.css">
+  </head>
+  <body>
+
+    <div id="drag" style="-webkit-app-region: drag"></div>
+
+    <script>
+        const imageph = document.getElementById("imageph1");
+        require('electron').ipcRenderer.on('new-image', (event, message) => {
+            document.documentElement.style.background = "url(" + message + ") no-repeat center center fixed";
+			document.documentElement.style.backgroundSize ="cover";
+        })
+      </script>
+
+  </body>
+</html>
