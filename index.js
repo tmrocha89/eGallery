@@ -1,5 +1,5 @@
 const { app, BrowserWindow, globalShortcut } = require('electron')
-const Gallery = require('./slider');
+const Gallery = require('./gallery');
 
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -15,7 +15,6 @@ function createWindow () {
     width: size,
     height: size,
     frame: false,
-    transparent: true,
     webPreferences: {
       nodeIntegration: true
     }
@@ -26,7 +25,7 @@ function createWindow () {
   win.setMenu(null);
 
   // Open the DevTools.
-  //win.webContents.openDevTools()
+  win.webContents.openDevTools()
   
   win.setIgnoreMouseEvents(ignoreMouseEvents);
   
@@ -38,31 +37,9 @@ function createWindow () {
     win = null
   });
 
-  let gallery = new Gallery(win.webContents);
-  gallery.run();
-
-  setTimeout(() => {
-      win.frame =false;
-  }, 1000);
-
-  globalShortcut.register('CommandOrControl+M', () => {
-      size += 100;
-      win.setSize(size, size);
-  })
-  globalShortcut.register('CommandOrControl+L', () => {
-    size -= 100;
-    if (size <= 0){
-        size = 100;
-    }
-    win.setSize(size, size);
-  })
-  globalShortcut.register('CommandOrControl+D', () => {
-    ignoreMouseEvents= !ignoreMouseEvents;
-    win.setIgnoreMouseEvents(ignoreMouseEvents);
-  })
-  globalShortcut.register('Esc', () => {
-    app.quit();
-  })
+  runGallery();
+  setupShortCuts();
+  
 }
 
 // This method will be called when Electron has finished
@@ -89,3 +66,41 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+let gallery
+
+function runGallery(){
+    gallery = new Gallery(win.webContents);
+    gallery.run();
+};
+
+function setupShortCuts(){
+    globalShortcut.register('CommandOrControl+M', () => {
+        size += 100;
+        win.setSize(size, size);
+    });
+    globalShortcut.register('CommandOrControl+L', () => {
+        size -= 100;
+        if (size <= 0){
+            size = 100;
+        }
+        win.setSize(size, size);
+    });
+    globalShortcut.register('CommandOrControl+D', () => {
+        ignoreMouseEvents= !ignoreMouseEvents;
+        win.setIgnoreMouseEvents(ignoreMouseEvents);
+    });
+    globalShortcut.register('Esc', () => {
+        app.quit();
+    });
+    globalShortcut.register('CommandOrControl+Q', () => {
+        if(gallery){
+            gallery.speedUp();
+        };
+    });
+    globalShortcut.register('CommandOrControl+S', () => {
+        if(gallery){
+            gallery.speedDown();
+        };
+    });
+}
